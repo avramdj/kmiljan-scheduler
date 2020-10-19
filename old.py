@@ -2,8 +2,9 @@ import requests as req
 from bs4 import BeautifulSoup
 import re
 import json
-from pprint import pprint
 import sys
+from pprint import pprint
+import pickle
 from transliterate import translit
 
 
@@ -21,13 +22,11 @@ class Course:
         self.groups = to_latin(groups)
         self.classroom = to_latin(classroom)
 
-
 def to_latin(text):
 
     if isinstance(text, list):
         return [translit(x, 'sr', reversed=True) for x in text]
     return translit(text, 'sr', reversed=True)
-
 
 def get_course(td, weekday, teacher, time):
 
@@ -41,8 +40,7 @@ def get_course(td, weekday, teacher, time):
     if re.search('(практикум)', text):
         course_type = "practicum"
 
-    description = re.search(
-        '[a-z\u0400-\u04FF]+(\s[a-z\u0400-\u04FF]+)*(\ \d[a-z\u0400-\u04FF]?)?', text)
+    description = re.search('[a-z\u0400-\u04FF]+(\s[a-z\u0400-\u04FF]+)*(\ \d[a-z\u0400-\u04FF]?)?',text)
     description_pos = description.start()
     description_text = description.group(0)
     description = description.group(0)
@@ -67,45 +65,59 @@ def get_course(td, weekday, teacher, time):
     )
 
 
+# Main
 base_link = 'http://poincare.matf.bg.ac.rs/~kmiljan/raspored/sve/'
-base = req.get(base_link)
-content = base.content.decode('utf-8')
-base_soup = BeautifulSoup(content, 'html.parser')
 
-groups = {x.get_text(): x['value'] for x in base_soup.find_all(
-    'option', value=re.compile('form'))}
+resp = req.get(base_link)
+content = resp.content.decode('utf-8')
+bs_obj = BeautifulSoup(content, 'html.parser')
 
-# izbaci seminarski
-groups.pop('СЕМИНАР')
+# Dohvati sve profesore, mapiraj LINK -> IME
+teachers = {x['value']: x.get_text()
+            for x in bs_obj.find_all('option', value=re.compile('teacher'))}
+# pprint(teachers)
 
-modules = {}
+courses = []
 
-# put groups under corresponding modules
-modules['i'] = [(x, groups[x]) for x in groups.keys() if 'И' in x]
-modules['m'] = [(x, groups[x]) for x in groups.keys() if 'М' in x or 'О' in x]
-modules['n'] = [(x, groups[x]) for x in groups.keys() if 'Н' in x or 'О' in x]
-modules['v'] = [(x, groups[x]) for x in groups.keys() if 'В' in x or 'О' in x]
-modules['r'] = [(x, groups[x]) for x in groups.keys() if 'Р' in x or 'О' in x]
-modules['l'] = [(x, groups[x]) for x in groups.keys() if 'Л' in x or 'О' in x]
+for teacher in teachers.keys():
 
-# put groups under corresponding years
-for x in modules.keys():
+    print("Working on: " + teacher, file=sys.stderr)
 
-    years = {}
+    resp = req.get(base_link + teacher)
+    content = resp.content.decode('utf-8')
+    bs_obj = BeautifulSoup(content, 'html.parser')
 
-    for i in range(1, 6):
+    # Odmah u startu uklanjamo sve <br> i pretvaramo u '\n' jer kasnije olaksava parsiranje
+    for br in bs_obj.find_all('br'):
+        br.replace_with('\n')
 
-        years[i] = [group for group in modules[x] if group[0][0] == str(i)]
+    # Redovi (dani) glavne radne tabele
+    rows = []
+    rows.append(bs_obj.find('td', {"bgcolor": re.compile(".*")}).find_parent())
+    rows.extend(rows[0].find_next_siblings('tr'))
 
-    modules[x] = years
+    # 5 Dana u radnoj nedelji
+    for row_index in range(len(rows)):
 
-# parse all course data from groups
+        time = 8
 
-forms = {}
+        # Pocinjemo od indeksa 1 jer preskacemo td sa radnim danom
+        for td in rows[row_index].find_all('td')[1::]:
 
-for link in groups:
+            duration = 1
+            if td.has_attr('colspan'):
+                duration = int(td['colspan'])
 
-    forms[link] = data
+                courses.append(get_course(
+                    td, row_index, teachers[teacher], time))
+
+            time += duration
+
+courses_dict = {}
+for course_raw in courses:
+    course = course_raw.__dict__
+    class_ = course['description']
 
 
-pprint(modules)
+
+pickle.dump(courses, open( "courses.p", "wb" ) )
