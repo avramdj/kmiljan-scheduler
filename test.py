@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import re
 import json
 from pprint import pprint
+import pickle
 import sys
 from transliterate import translit
 
@@ -20,6 +21,13 @@ class Course:
         self.course_type = course_type
         self.groups = to_latin(groups)
         self.classroom = to_latin(classroom)
+
+    def __eq__(self, other): 
+        if not isinstance(other, Course):
+            # don't attempt to compare against unrelated types
+            return NotImplemented
+
+        return self.__dict__ == other.__dict__
 
 
 def to_latin(text):
@@ -105,7 +113,10 @@ forms = {}
 
 for link in groups:
 
-    forms[link] = data
+
+
+    forms[link] = pass
 
 
 pprint(modules)
+pickle.dump(modules, open('courses.p', 'wb'))
