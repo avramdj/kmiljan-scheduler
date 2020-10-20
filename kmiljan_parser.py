@@ -59,8 +59,10 @@ def get_course(td, weekday, time, classroom):
     for group in groups:
         for char in group:
             c = to_latin(char).lower()
-            if c in "imnvrlo":
+            if c in "imnvrl":
                 modules.add(c)
+            if c == 'o':
+                modules.update(list("mnvrl"))
 
     modules = list(modules)
     years = [int(group[0]) for group in groups]

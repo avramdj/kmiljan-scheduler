@@ -27,12 +27,12 @@ def picker(smer, code):
     courses = []
     for year in years:
         courses.extend([c for c in data.get_modules()[smer][year]])
-    return render_template('picker.html', courses=courses)
+    return render_template('picker.html', courses=courses, smer=smer)
 
 
 @app.route('/api/scheduler/<regex("[imnvrl]"):smer>', methods=['POST'])
 def schedule(smer):
-    picked_dict = request.form()
+    picked_dict = request.get_json(force=True)
     picked = []
     for course in picked_dict:
         picked.append([course, 'lecture', 0])
@@ -41,9 +41,11 @@ def schedule(smer):
         picked[i][2] = [x for x in data.get_courses() if x['description'] == picked[i][0]
                                                     and x['course_type'] == picked[i][1]
                                                     and smer in x['modules']]
+        if len(picked[i][2]) == 0:
+            picked.pop(i)
+
     scheduler = Scheduler(picked)
     res = scheduler.find()
-    pprint(res)
     return {'courses': res}
 
 @app.route('/api')

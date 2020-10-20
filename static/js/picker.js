@@ -2,9 +2,25 @@ $(document).ready(function(){
 
     $('body').css('display', 'none');
     $('body').fadeIn(350);
+    const smer = $('#smer').text();
 
     $("#courseform").submit(function(){
-        console.log($(':checkbox:checked'))
+
+        var picked = []
+        var checked = $(':checkbox:checked')
+        checked.each(function(){
+            picked.push($(this).attr('id'))
+        })
+
+        fetch(`/api/scheduler/${smer}`, {
+            method: 'POST',
+            body: JSON.stringify(picked),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(res => console.log(res))
         return false
     });
 
@@ -17,7 +33,7 @@ $(document).ready(function(){
     }
 
     function showCourses(courses){
-        
+        console.log(courses)
     }
 
 });
