@@ -44,7 +44,7 @@ class Scheduler:
 
         for i in range(term['start']-8, term['end']-8):
 
-            if self.bitmap[term['day']][i]:
+            if self.bitmap[term['day']][i] != 0:
                 return True
 
         return False
@@ -107,5 +107,7 @@ for i, _ in enumerate(picked):
 #print(picked[i])
 
 scheduler = Scheduler(picked)
-
-pprint(scheduler.find())
+res = scheduler.find()
+if res:
+    res.sort(key=lambda x : (x['day'], x['start']))
+    pprint(res)
