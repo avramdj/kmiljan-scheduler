@@ -30,6 +30,22 @@ def picker(smer, code):
     return render_template('picker.html', courses=courses)
 
 
+@app.route('/api/scheduler/<regex("[imnvrl]"):smer>', methods=['POST'])
+def schedule(smer):
+    picked_dict = request.form()
+    picked = []
+    for course in picked_dict:
+        picked.append([course, 'lecture', 0])
+        picked.append([course, 'exercise', 0])
+    for i, _ in enumerate(picked):
+        picked[i][2] = [x for x in data.get_courses() if x['description'] == picked[i][0]
+                                                    and x['course_type'] == picked[i][1]
+                                                    and smer in x['modules']]
+    scheduler = Scheduler(picked)
+    res = scheduler.find()
+    pprint(res)
+    return {'courses': res}
+
 @app.route('/api')
 def api_root():
     return data.get_modules()
@@ -43,8 +59,8 @@ def api_smer(smer, code):
 def api_courses():
     return {'courses': data.get_courses()}
 
-@app.route('/*')
-def error():
+@app.errorhandler(404)
+def page_not_found(e):
     return render_template('error.html', error_code="404", error_message="Not found")
 
 def decode_years(code):

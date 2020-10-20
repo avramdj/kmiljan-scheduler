@@ -2,9 +2,12 @@ import requests as req
 from pprint import pprint
 import pickle
 from scheduler import Scheduler
+from data_server import DataServer
 
-all_courses = pickle.load(open('courses.p', 'rb'))
-all_modules = pickle.load(open('modules.p', 'rb'))
+data = DataServer()
+
+all_courses = data.get_courses()
+all_modules = data.get_modules()
 
 module = input("Unesi module: ")
 years = input("Godine iz kojih slusas kurseve: ").strip().split(" ")
@@ -32,6 +35,8 @@ picked = []
 for ind in inds:
     picked.append([courses[int(ind)], 'lecture', 0])
     picked.append([courses[int(ind)], 'exercise', 0])
+
+pprint(picked)
 
 for i, _ in enumerate(picked):
     picked[i][2] = [x for x in all_courses if x['description'] == picked[i][0]
