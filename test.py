@@ -49,9 +49,9 @@ def get_course(td, weekday, time, classroom):
         course_type = "practicum"
 
     description = re.search(
-            '(?<=\>)[a-z\u0400-\u04FF]+(\s[a-z\u0400-\u04FF]+)*(\ \d[a-z\u0400-\u04FF]?)?', lines[0]).group(0)
+            '(?<=\>)[-a-zA-Z\u0400-\u04FF]+(\s[-a-zA-Z\u0400-\u04FF]+)*(\ \d[a-zA-Z\u0400-\u04FF]?)?', lines[0]).group(0)
     groups = list(
-        set(re.findall('\d[a-z\u0400-\u04FF]+\d?[a-z\u0400-\u04FF]?', lines[1])))
+        set(re.findall('\d[a-zA-Z\u0400-\u04FF]+\d?[a-zA-Z\u0400-\u04FF]?', lines[1])))
     teacher = re.search('^(.*)?<', lines[-1]).group(0)[:-1]
 
     return Course(
@@ -144,7 +144,7 @@ for module in modules:
 
     for year in modules[module]:
 
-        courses_for_year = {}
+        courses_for_year = set([])
 
         for group in modules[module][year]:
             
@@ -152,14 +152,10 @@ for module in modules:
 
                 if group in course['groups']:
 
-                    if course['description'] not in courses_for_year:
-                        courses_for_year[course['description']] = {'lecture' : [], 
-                                                                    'exercise': [],
-                                                                     'practicum' : []}
-
-                    courses_for_year[course['description']][course['course_type']].append(course)
+                    courses_for_year.add(course['description'])
 
         modules[module][year] = courses_for_year
 
 #pprint(modules)
-pickle.dump(modules, open('courses.p', 'wb'))
+pickle.dump(modules, open('modules.p', 'wb'))
+pickle.dump(courses, open('courses.p', 'wb'))
