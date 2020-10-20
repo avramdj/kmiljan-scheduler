@@ -22,11 +22,11 @@ def hello():
     return data.get_modules()
 
 @app.route('/api')
-def hello():
+def api_root():
     return data.get_modules()
 
 @app.route('/api/<regex("[imnvrl]"):uid>/')#, methods=['GET', 'POST'])
-def smer(uid):
+def api_smer(uid):
     return data.get_modules()[uid]
 
 
