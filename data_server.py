@@ -7,24 +7,37 @@ from kmiljan_parser import download_courses, download_modules
 from scheduler import Scheduler
 from datetime import date
 
-def fetch_courses():
-    #fetch and periodically update course information
-    all_courses = []
-    all_modules = {}
-    today = date.today().strftime("%b_%d_%Y")
-    try:
-        all_courses = pickle.load(open(f'pickles/courses_{today}.p', 'rb'))
-        all_modules = pickle.load(open(f'pickles/modules_{today}.p', 'rb'))
-    except FileNotFoundError:
 
-        old_pickles = glob('./pickles/*.p')
+class DataServer:
+    
+    def __init__(self):
+        self.all_courses = []
+        self.all_modules = {}
+        self.last_update = None
+        self.update()
 
-        for file in old_pickles:
-            os.remove(file)
+    def get_courses(self):
+        #fetch and periodically update course information
+        today = date.today().strftime("%b_%d_%Y")
+        
+        if self.last_update != today:
+            self.update()
+        return self.all_courses
 
-        all_courses = download_courses()
-        all_modules = download_modules(all_courses)
+    def get_modules(self):
+        #fetch and periodically update module information
+        today = date.today().strftime("%b_%d_%Y")
+        
+        if self.last_update != today:
+            self.update()
+        return self.all_modules
 
-        pickle.dump(all_courses, open(f'pickles/courses_{today}.p', 'wb'))
-        pickle.dump(all_modules, open(f'pickles/modules_{today}.p', 'wb'))
+    def update(self):
+        self.all_courses = download_courses()
+        self.all_modules = download_modules(self.all_courses)
 
+        pickle.dump(self.all_courses, open(f'pickles/courses.p', 'wb'))
+        pickle.dump(self.all_modules, open(f'pickles/modules.p', 'wb'))
+
+        today = date.today().strftime("%b_%d_%Y")
+        self.last_update = today

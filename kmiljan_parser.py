@@ -104,7 +104,7 @@ def download_modules(courses):
 
                         courses_for_year.add(course['description'])
 
-            modules[module][year] = courses_for_year
+            modules[module][year] = list(courses_for_year)
 
     return modules
 
