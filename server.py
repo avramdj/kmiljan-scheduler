@@ -17,6 +17,10 @@ class RegexConverter(BaseConverter):
 
 app.url_map.converters['regex'] = RegexConverter
 
+@app.route('/')
+def hello():
+    return data.get_modules()
+
 @app.route('/api')
 def hello():
     return data.get_modules()
