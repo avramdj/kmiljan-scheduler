@@ -12,7 +12,7 @@ base_link = 'http://poincare.matf.bg.ac.rs/~kmiljan/raspored/sve/'
 class Course:
 
     def __init__(self, description, day, teacher, start,
-                 duration, course_type, groups, classroom):
+                 duration, course_type, groups, classroom, modules, years):
         self.description = to_latin(description)
         self.day = day
         self.teacher = to_latin(teacher)
@@ -22,6 +22,8 @@ class Course:
         self.course_type = course_type
         self.groups = [(to_latin(group)).lower() for group in groups]
         self.classroom = to_latin(classroom)
+        self.modules = [(to_latin(module)).lower() for module in modules]
+        self.years = years
 
     def __eq__(self, other):
         if not isinstance(other, Course):
@@ -52,6 +54,17 @@ def get_course(td, weekday, time, classroom):
         set(re.findall('\d[a-zA-Z\u0400-\u04FF]+\d?[a-zA-Z\u0400-\u04FF]?', lines[1])))
     teacher = re.search('^(.*)?<', lines[-1]).group(0)[:-1]
 
+    modules = set([])
+
+    for group in groups:
+        for char in group:
+            c = to_latin(char).lower()
+            if c in "imnvrlo":
+                modules.add(c)
+
+    modules = list(modules)
+    years = [int(group[0]) for group in groups]
+
     return Course(
         description,
         weekday,
@@ -60,7 +73,9 @@ def get_course(td, weekday, time, classroom):
         duration,
         course_type,
         groups,
-        classroom
+        classroom,
+        modules,
+        years
     )
 
 
@@ -104,7 +119,9 @@ def download_modules(courses):
 
                         courses_for_year.add(course['description'])
 
-            modules[module][year] = list(courses_for_year)
+            courses_list = list(courses_for_year)
+            courses_list.sort()
+            modules[module][year] = courses_list
 
     return modules
 

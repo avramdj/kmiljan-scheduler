@@ -33,11 +33,11 @@ class DataServer:
         return self.all_modules
 
     def update(self):
-        self.all_courses = download_courses()
-        self.all_modules = download_modules(self.all_courses)
+        self.all_courses = download_courses() #pickle.load(open('pickles/courses.p', 'rb')) 
+        self.all_modules = download_modules(self.all_courses) #pickle.load(open('pickles/modules.p', 'rb'))
 
-        pickle.dump(self.all_courses, open(f'pickles/courses.p', 'wb'))
-        pickle.dump(self.all_modules, open(f'pickles/modules.p', 'wb'))
+        #pickle.dump(self.all_courses, open('pickles/courses.p', 'wb'))
+        #pickle.dump(self.all_modules, open('pickles/modules.p', 'wb'))
 
         today = date.today().strftime("%b_%d_%Y")
         self.last_update = today

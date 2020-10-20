@@ -1,0 +1,80 @@
+.centered {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.titletext {
+    font-family: 'Raleway', sans-serif;
+}
+
+.hidden {
+    opacity: 0%;
+}
+
+.errorSpan {
+    color: #ec7878;
+    height: 60px;
+}
+
+.fixmarg1 {
+    margin-top: 6px;
+    margin-bottom: 3px;
+}
+
+.fixmarg2 {
+    margin-top: 5px;
+}
+
+.fixmarg3 {
+    margin-top: 5px;
+}
+
+/* #root {
+    height:100vh;
+    background: linear-gradient(#ffffff, #ddfff8);
+} */
+
+.form-control::-webkit-input-placeholder { opacity: 50%; }  /* WebKit, Blink, Edge */
+.form-control:-moz-placeholder { opacity: 50%; }  /* Mozilla Firefox 4 to 18 */
+.form-control::-moz-placeholder { opacity: 50%; }  /* Mozilla Firefox 19+ */
+.form-control:-ms-input-placeholder { opacity: 50%; }  /* Internet Explorer 10-11 */
+.form-control::-ms-input-placeholder { opacity: 50%; }  /* Microsoft Edge */
+
+
+.githubimg {
+    margin-top: 10px;
+    width: 20px;
+    height: 20px;
+    opacity: 50%;
+}
+
+.githubimg:hover {
+    cursor: pointer;
+}
+
+.ghlink:hover {
+    cursor: pointer;
+}
+
+/* .githublink {
+    opacity: 50%;
+}
+
+.githublink:hover {
+    opacity: 100%;
+} */
+
+#target {
+    height: 60px;
+}
+
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
