@@ -39,7 +39,6 @@ class Scheduler:
         
         return False
 
-
     def conflict(self, term: dict):
 
         for i in range(term['start']-8, term['end']-8):
@@ -66,6 +65,8 @@ class Scheduler:
     def done(self):
 
         return len(self.placed) == len(self.courses)
+
+
 
 
 all_courses = pickle.load(open('courses.p', 'rb'))

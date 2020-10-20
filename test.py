@@ -6,64 +6,7 @@ from pprint import pprint
 import pickle
 import sys
 from transliterate import translit
-
-
-class Course:
-
-    def __init__(self, description, day, teacher, start,
-                 duration, course_type, groups, classroom):
-
-        self.description = to_latin(description)
-        self.day = day
-        self.teacher = to_latin(teacher)
-        self.start = start
-        self.duration = duration
-        self.end = start + duration
-        self.course_type = course_type
-        self.groups = [(to_latin(group)).lower() for group in groups]
-        self.classroom = to_latin(classroom)
-
-    def __eq__(self, other):
-        if not isinstance(other, Course):
-            return NotImplemented
-
-        return self.__dict__ == other.__dict__
-
-
-def to_latin(text):
-
-   return translit(text, 'sr', reversed=True)
-
-
-def get_course(td, weekday, time, classroom):
-
-    text = str(td).strip()
-    lines = text.split('\n')
-    duration = int(td['colspan'])
-
-    course_type = "lecture"
-
-    if re.search('(вежбе)', text):
-        course_type = "exercise"
-    if re.search('(практикум)', text):
-        course_type = "practicum"
-
-    description = re.search(
-            '(?<=\>)[-a-zA-Z\u0400-\u04FF]+(\s[-a-zA-Z\u0400-\u04FF]+)*(\ \d[a-zA-Z\u0400-\u04FF]?)?', lines[0]).group(0)
-    groups = list(
-        set(re.findall('\d[a-zA-Z\u0400-\u04FF]+\d?[a-zA-Z\u0400-\u04FF]?', lines[1])))
-    teacher = re.search('^(.*)?<', lines[-1]).group(0)[:-1]
-
-    return Course(
-        description,
-        weekday,
-        teacher,
-        time,
-        duration,
-        course_type,
-        groups,
-        classroom
-    )
+from models import Course, get_course
 
 
 base_link = 'http://poincare.matf.bg.ac.rs/~kmiljan/raspored/sve/'
