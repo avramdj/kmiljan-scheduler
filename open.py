@@ -1,12 +1,7 @@
 import requests as req
-from bs4 import BeautifulSoup
-import re
-import json
-import sys
 from pprint import pprint
 import pickle
-import numpy as np
-
+from scheduler import Scheduler
 
 all_courses = pickle.load(open('courses.p', 'rb'))
 all_modules = pickle.load(open('modules.p', 'rb'))
