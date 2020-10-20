@@ -138,14 +138,13 @@ for room, room_name in rooms:
 
             time += duration
 
-
 #pprint(courses)
 
 for module in modules:
 
     for year in modules[module]:
 
-        courses_for_year = []
+        courses_for_year = {}
 
         for group in modules[module][year]:
             
@@ -153,7 +152,12 @@ for module in modules:
 
                 if group in course['groups']:
 
-                    courses_for_year.append(course)
+                    if course['description'] not in courses_for_year:
+                        courses_for_year[course['description']] = {'lecture' : [], 
+                                                                    'exercise': [],
+                                                                     'practicum' : []}
+
+                    courses_for_year[course['description']][course['course_type']].append(course)
 
         modules[module][year] = courses_for_year
 
