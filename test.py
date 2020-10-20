@@ -5,8 +5,7 @@ import json
 from pprint import pprint
 import pickle
 import sys
-from transliterate import translit
-from models import Course, get_course
+from util import Course, get_course, to_latin
 
 
 base_link = 'http://poincare.matf.bg.ac.rs/~kmiljan/raspored/sve/'
@@ -32,13 +31,9 @@ modules['l'] = [to_latin(x).lower() for x in groups.keys() if 'Л' in x or 'О' 
 
 # put groups under corresponding years
 for x in modules.keys():
-
     years = {}
-
     for i in range(1, 6):
-
         years[i] = [group for group in modules[x] if group[0][0] == str(i)]
-
     modules[x] = years
 
 # create forms dict so we don't iterate over the same form mulitple times
@@ -71,11 +66,9 @@ for room, room_name in rooms:
 
         # Pocinjemo od indeksa 1 jer preskacemo td sa radnim danom
         for td in rows[row_index].find_all('td')[1::]:
-
             duration = 1
             if td.has_attr('colspan'):
                 duration = int(td['colspan'])
-
                 courses.append(get_course(
                     td, row_index, time, room_name).__dict__)
 
