@@ -10,7 +10,8 @@ from transliterate import translit
 
 class Course:
 
-    def __init__(self, description, day, teacher, start, duration, course_type, groups, classroom):
+    def __init__(self, description, day, teacher, start,
+                 duration, course_type, groups, classroom):
 
         self.description = to_latin(description)
         self.day = day
@@ -19,12 +20,11 @@ class Course:
         self.duration = duration
         self.end = start + duration
         self.course_type = course_type
-        self.groups = to_latin(groups)
+        self.groups = [(to_latin(group)).lower() for group in groups]
         self.classroom = to_latin(classroom)
 
-    def __eq__(self, other): 
+    def __eq__(self, other):
         if not isinstance(other, Course):
-            # don't attempt to compare against unrelated types
             return NotImplemented
 
         return self.__dict__ == other.__dict__
@@ -32,14 +32,13 @@ class Course:
 
 def to_latin(text):
 
-    if isinstance(text, list):
-        return [translit(x, 'sr', reversed=True) for x in text]
-    return translit(text, 'sr', reversed=True)
+   return translit(text, 'sr', reversed=True)
 
 
-def get_course(td, weekday, teacher, time):
+def get_course(td, weekday, time, classroom):
 
-    text = td.get_text().strip()
+    text = str(td).strip()
+    lines = text.split('\n')
     duration = int(td['colspan'])
 
     course_type = "lecture"
@@ -50,18 +49,10 @@ def get_course(td, weekday, teacher, time):
         course_type = "practicum"
 
     description = re.search(
-        '[a-z\u0400-\u04FF]+(\s[a-z\u0400-\u04FF]+)*(\ \d[a-z\u0400-\u04FF]?)?', text)
-    description_pos = description.start()
-    description_text = description.group(0)
-    description = description.group(0)
-
-    # Pomeramo text za ime predmeta, i zatim pretrazujemo odatle
-    text = text[description_pos + len(description_text)::]
-
+            '(?<=\>)[a-z\u0400-\u04FF]+(\s[a-z\u0400-\u04FF]+)*(\ \d[a-z\u0400-\u04FF]?)?', lines[0]).group(0)
     groups = list(
-        set(re.findall('\d[a-z\u0400-\u04FF]+\d?[a-z\u0400-\u04FF]?', text)))
-    classroom = re.findall(
-        '(?<=\()(\d{3}|[a-z\u0400-\u04FF]+\d*)(?=\))', text)[-1]
+        set(re.findall('\d[a-z\u0400-\u04FF]+\d?[a-z\u0400-\u04FF]?', lines[1])))
+    teacher = re.search('^(.*)?<', lines[-1]).group(0)[:-1]
 
     return Course(
         description,
@@ -89,12 +80,12 @@ groups.pop('СЕМИНАР')
 modules = {}
 
 # put groups under corresponding modules
-modules['i'] = [(x, groups[x]) for x in groups.keys() if 'И' in x]
-modules['m'] = [(x, groups[x]) for x in groups.keys() if 'М' in x or 'О' in x]
-modules['n'] = [(x, groups[x]) for x in groups.keys() if 'Н' in x or 'О' in x]
-modules['v'] = [(x, groups[x]) for x in groups.keys() if 'В' in x or 'О' in x]
-modules['r'] = [(x, groups[x]) for x in groups.keys() if 'Р' in x or 'О' in x]
-modules['l'] = [(x, groups[x]) for x in groups.keys() if 'Л' in x or 'О' in x]
+modules['i'] = [to_latin(x).lower() for x in groups.keys() if 'И' in x]
+modules['m'] = [to_latin(x).lower() for x in groups.keys() if 'М' in x or 'О' in x]
+modules['n'] = [to_latin(x).lower() for x in groups.keys() if 'Н' in x or 'О' in x]
+modules['v'] = [to_latin(x).lower() for x in groups.keys() if 'В' in x or 'О' in x]
+modules['r'] = [to_latin(x).lower() for x in groups.keys() if 'Р' in x or 'О' in x]
+modules['l'] = [to_latin(x).lower() for x in groups.keys() if 'Л' in x or 'О' in x]
 
 # put groups under corresponding years
 for x in modules.keys():
@@ -107,16 +98,64 @@ for x in modules.keys():
 
     modules[x] = years
 
-# parse all course data from groups
+# create forms dict so we don't iterate over the same form mulitple times
 
-forms = {}
+rooms = [(x['value'], x.get_text()) for x in base_soup.find_all(
+    'option', value=re.compile('room'))]
+courses = []
 
-for link in groups:
+for room, room_name in rooms:
+
+    print("Working on: " + room, file=sys.stderr)
+
+    resp = req.get(base_link + room)
+    content = resp.content.decode('utf-8')
+    soup = BeautifulSoup(content, 'html.parser')
+
+    # Odmah u startu uklanjamo sve <br> i pretvaramo u '\n' jer kasnije olaksava parsiranje
+    for br in soup.find_all('br'):
+        br.replace_with('\n')
+
+    # Redovi (dani) glavne radne tabele
+    rows = []
+    rows.append(soup.find('td', {"bgcolor": re.compile(".*")}).find_parent())
+    rows.extend(rows[0].find_next_siblings('tr'))
+
+    # 5 Dana u radnoj nedelji
+    for row_index in range(len(rows)):
+
+        time = 8
+
+        # Pocinjemo od indeksa 1 jer preskacemo td sa radnim danom
+        for td in rows[row_index].find_all('td')[1::]:
+
+            duration = 1
+            if td.has_attr('colspan'):
+                duration = int(td['colspan'])
+
+                courses.append(get_course(
+                    td, row_index, time, room_name).__dict__)
+
+            time += duration
 
 
+#pprint(courses)
 
-    forms[link] = pass
+for module in modules:
 
+    for year in modules[module]:
 
-pprint(modules)
+        courses_for_year = []
+
+        for group in modules[module][year]:
+            
+            for course in courses:
+
+                if group in course['groups']:
+
+                    courses_for_year.append(course)
+
+        modules[module][year] = courses_for_year
+
+#pprint(modules)
 pickle.dump(modules, open('courses.p', 'wb'))
