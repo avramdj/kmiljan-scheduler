@@ -161,7 +161,9 @@ def download_courses():
             # Pocinjemo od indeksa 1 jer preskacemo td sa radnim danom
             for td in row.find_all('td')[1::]:
                 duration = 1
-                if td.has_attr('colspan'):
+                if td.get_text().strip():
+                    if 'colspan' not in td:
+                        td['colspan'] = 1
                     duration = int(td['colspan'])
                     courses.append(get_course(
                         td, i, time, room_name).__dict__)

@@ -1,3 +1,5 @@
+var classes;
+
 $(document).ready(function(){
 
     $('body').css('display', 'none');
@@ -6,11 +8,12 @@ $(document).ready(function(){
 
     $("#courseform").submit(function(){
 
-        var picked = []
-        var checked = $(':checkbox:checked')
+        let picked = []
+        let checked = $(':checkbox:checked')
         checked.each(function(){
             picked.push($(this).attr('id'))
         })
+
 
         fetch(`/api/scheduler/${smer}`, {
             method: 'POST',
@@ -20,7 +23,9 @@ $(document).ready(function(){
             }
         })
         .then(res => res.json())
-        .then(res => console.log(res))
+        .then(data => classes = data['courses'])
+        .then(() => console.log(classes))
+
         return false
     });
 

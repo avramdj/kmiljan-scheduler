@@ -37,13 +37,13 @@ def schedule(smer):
     for course in picked_dict:
         picked.append([course, 'lecture', 0])
         picked.append([course, 'exercise', 0])
+        picked.append([course, 'practicum', 0])
     for i, _ in enumerate(picked):
         picked[i][2] = [x for x in data.get_courses() if x['description'] == picked[i][0]
                                                     and x['course_type'] == picked[i][1]
                                                     and smer in x['modules']]
-        if len(picked[i][2]) == 0:
-            picked.pop(i)
 
+    picked = [x for x in picked if len(x[2])]
     scheduler = Scheduler(picked)
     res = scheduler.find()
     return {'courses': res}
