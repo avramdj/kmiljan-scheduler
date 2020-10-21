@@ -142,3 +142,7 @@ input.checkbox:checked + label:before {
     -1px 1px 0 #000,
     1px 1px 0 #000;  
 }
+
+label.titletext::hover{
+    cursor: pointer;
+}

@@ -50,6 +50,10 @@ $(document).ready(function(){
         location.reload()
     })
 
+    $("#home").click(function(){
+        window.location = '/';
+    })
+
     function unshowSchedule(){
         $('#schedule').fadeOut(200)
         $('#courseform').fadeIn(200)
@@ -74,9 +78,9 @@ $(document).ready(function(){
         rows = table.children()
         day = rows[course.day]
         td = (day.children)[course.start-7]
-        td.textContent = `${course.description}`
+        td.innerHTML = `${course.description}`
         if(course.course_type != 'lecture'){
-            td.textContent += `\n(${course.course_type[0] == 'e' ? 'vezbe' : 'praktikum'})`
+            td.innerHTML += `\n(${course.course_type[0] == 'e' ? 'vezbe' : 'praktikum'})`
         }
         td.setAttribute('colspan', course.duration)
     }
@@ -107,12 +111,13 @@ $(document).ready(function(){
         rows = table.children()
         day = rows[course.day]
         td = (day.children)[course.start-7]
-        td.textContent = course.description
+        td.innerHTML = course.description
         if(course.course_type != 'lecture'){
-            td.textContent += `\n(${course.course_type[0] == 'e' ? 'vezbe' : 'praktikum'})`
+            td.innerHTML += ` (${course.course_type[0] == 'e' ? 'vezbe' : 'praktikum'})`
         }
+        td.innerHTML += `<br/>${course.teacher}`
         td.setAttribute('colspan', course.duration)
-        td.setAttribute('hashcode', hashCode(td.textContent))
+        td.setAttribute('hashcode', hashCode(td.innerHTML))
         td.style.background = `#${intToRGB(course.description)}`
         /* url('/static/img/bg.png') left top"; */
         /*td.style.color = '#ffffff' */

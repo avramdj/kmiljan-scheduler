@@ -78,3 +78,7 @@
     -ms-user-select: none;
     user-select: none;
 }
+
+input::hover{
+    cursor: pointer;
+}
