@@ -67,16 +67,13 @@ $(document).ready(function(){
     function fillSchedule(){
         classes.sort((a, b) => {
             if(a.day != b.day){
-                return a.day - b.day
+                return b.day - a.day
             } else {
-                return a.end - b.end
+                return b.end - a.end
             }
         })
         for(c in classes){
             placeInTable(classes[c])
-        }
-        for(c in classes){
-            cleanTable(classes[c])
         }
     }
 
@@ -118,11 +115,17 @@ $(document).ready(function(){
         day = rows[course.day]
         td = (day.children)[course.start-7]
         td.textContent = course.description
+        if(course.course_type != 'lecture'){
+            td.textContent += `\n(${course.course_type[0] == 'e' ? 'vezbe' : 'praktikum'})`
+        }
         td.setAttribute('colspan', course.duration)
-        /* td.style.background = "#f3f3f3 url('/static/img/bg.png') left top";
-        td.style.color = '#ffffff' */
+        td.setAttribute('hashcode', hashCode(td.textContent))
+        td.style.background = `#${intToRGB(course.description)}`
+        /* url('/static/img/bg.png') left top"; */
+        /*td.style.color = '#ffffff' */
+
         for(let i = 1; i < course.duration; i++){
-            excess = (day.children)[course.start-7+i]
+            excess = (day.children)[course.start-6]
             excess.remove()
         }
     }

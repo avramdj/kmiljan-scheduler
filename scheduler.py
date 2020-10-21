@@ -1,4 +1,5 @@
 import numpy as np
+from pprint import pprint
 import json
 
 
@@ -19,21 +20,21 @@ class Scheduler:
             return True
         for term in self.courses[i][2]:
             if not self.conflict(term):
-                self.place(term, i)
+                self.place(term)
                 if self._find(i+1):
                     return True
                 self.remove(term)
         return False
 
-    def conflict(self, term: dict):
+    def conflict(self, term):
         for i in range(term['start']-8, term['end']-8):
-            if self.bitmap[term['day']][i] != 0:
+            if self.bitmap[term['day']][i] == 1:
                 return True
         return False
 
-    def place(self, term, bit):
+    def place(self, term):
         for i in range(term['start']-8, term['end']-8):
-            self.bitmap[term['day']][i] = bit
+            self.bitmap[term['day']][i] = 1
         self.placed.add(json.dumps(term))
 
     def remove(self, term):
