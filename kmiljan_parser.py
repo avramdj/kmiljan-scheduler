@@ -162,7 +162,7 @@ def download_courses():
             for td in row.find_all('td')[1::]:
                 duration = 1
                 if td.get_text().strip():
-                    if 'colspan' not in td:
+                    if not td.has_attr('colspan'):
                         td['colspan'] = 1
                     duration = int(td['colspan'])
                     courses.append(get_course(

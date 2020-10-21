@@ -24,10 +24,13 @@ def home():
 @app.route('/picker/<regex("[imnvrl]"):smer>/<regex("[01]{4}"):code>')
 def picker(smer, code):
     years = decode_years(code)
+    days_list = "Pon,Uto,Sre,Cet,Pet".split(",")
     courses = []
     for year in years:
         courses.extend([c for c in data.get_modules()[smer][year]])
-    return render_template('picker.html', courses=courses, smer=smer)
+    return render_template('picker.html', courses=courses,
+                            smer=smer, days={i: x for i, x in enumerate(days_list)},
+                            hours=[x for x in range(13)])
 
 
 @app.route('/api/scheduler/<regex("[imnvrl]"):smer>', methods=['POST'])
@@ -73,4 +76,4 @@ def decode_years(code):
     return years
 
 if __name__ == '__main__':
-    app.run(host='localhost', port=3333)
+    app.run(host='0.0.0.0', port=3333)
