@@ -12,7 +12,7 @@ base_link = 'http://poincare.matf.bg.ac.rs/~kmiljan/raspored/sve/'
 class Course:
 
     def __init__(self, description, day, teacher, start,
-                 duration, course_type, groups, classroom, modules, years):
+                 duration, course_type, groups, classroom, modules, years, subgroups):
         self.description = to_latin(description)
         self.day = day
         self.teacher = to_latin(teacher)
@@ -24,6 +24,7 @@ class Course:
         self.classroom = to_latin(classroom)
         self.modules = [(to_latin(module)).lower() for module in modules]
         self.years = years
+        self.subgroups = [to_latin(subgroup).lower() for subgroup in subgroups]
 
     def __eq__(self, other):
         if not isinstance(other, Course):
@@ -34,7 +35,6 @@ class Course:
 def to_latin(text):
    return translit(text, 'sr', reversed=True)
 
-
 def get_course(td, weekday, time, classroom):
     #convert course information to Course object
     text = str(td).strip()
@@ -43,16 +43,18 @@ def get_course(td, weekday, time, classroom):
 
     course_type = "lecture"
 
-    if re.search('(вежбе)', text):
+    if re.search(r'(вежбе)', text):
         course_type = "exercise"
-    if re.search('(практикум)', text):
+    if re.search(r'(практикум)', text):
         course_type = "practicum"
 
     description = re.search(
-            '(?<=\>)[-a-zA-Z\u0400-\u04FF]+(\s[-a-zA-Z\u0400-\u04FF]+)*(\ \d[a-zA-Z\u0400-\u04FF]?)?', lines[0]).group(0)
+            r'(?<=\>)[-a-zA-Z\u0400-\u04FF]+(\s[-a-zA-Z\u0400-\u04FF]+)*(\ \d[a-zA-Z\u0400-\u04FF]?)?', lines[0]).group(0)
     groups = list(
-        set(re.findall('\d[a-zA-Z\u0400-\u04FF]+\d?[a-zA-Z\u0400-\u04FF]?', lines[1])))
-    teacher = re.search('^(.*)?<', lines[-1]).group(0)[:-1]
+        set(re.findall(r'\d[a-zA-Z\u0400-\u04FF]+\d?[a-zA-Z\u0400-\u04FF]?', lines[1])))
+    teacher = re.search(r'^(.*)?<', lines[-1]).group(0)[:-1]
+    #subgroups = re.findall(r'(\u0413\u0420\d)', lines[2])
+    subgroups = [x.strip() for x in lines[2].split(",")]
 
     modules = set([])
 
@@ -77,7 +79,8 @@ def get_course(td, weekday, time, classroom):
         groups,
         classroom,
         modules,
-        years
+        years,
+        subgroups
     )
 
 
@@ -87,7 +90,7 @@ def download_modules(courses):
     base_soup = BeautifulSoup(content, 'html.parser')
 
     groups = {x.get_text(): x['value'] for x in base_soup.find_all(
-        'option', value=re.compile('form'))}
+        'option', value=re.compile(r'form'))}
 
     groups.pop('СЕМИНАР')
 
@@ -134,7 +137,7 @@ def download_courses():
     content = base.content.decode('utf-8')
     base_soup = BeautifulSoup(content, 'html.parser')
     rooms = [(x['value'], x.get_text()) for x in base_soup.find_all(
-        'option', value=re.compile('room'))]
+        'option', value=re.compile(r'room'))]
     courses = []
 
     for room, room_name in rooms:
@@ -151,7 +154,7 @@ def download_courses():
 
         # rows = days
         rows = []
-        rows.append(soup.find('td', {"bgcolor": re.compile(".*")}).find_parent())
+        rows.append(soup.find('td', {"bgcolor": re.compile(r".*")}).find_parent())
         rows.extend(rows[0].find_next_siblings('tr'))
 
         for i, row in enumerate(rows):
@@ -170,4 +173,26 @@ def download_courses():
 
                 time += duration
 
+    fix_disjoint(courses)
+
     return courses
+
+def fix_disjoint(courses):
+    courses.sort(key=lambda x: (x['day'], x['start']))
+    #join courses that have only a room change
+    for i, _ in enumerate(courses):
+        j = i
+        while j < len(courses) and courses[j]['start'] < courses[i]['end']:
+            j += 1
+        while j < len(courses) and courses[j]['start'] == courses[i]['end']:
+            #if the only difference is the classroom
+            if courses[j]['description'] == courses[i]['description']\
+                and courses[j]['course_type'] == courses[i]['course_type']\
+                and set(courses[j]['groups']) == set(courses[i]['groups'])\
+                and set(courses[j]['subgroups']) == set(courses[i]['subgroups']):
+                print("joining {} for {}".format(courses[i]['description'], courses[i]['groups']), file=sys.stderr)
+                #then join
+                courses[i]['end'] += courses[j]['duration']
+                courses[i]['duration'] += courses[j]['duration']
+                courses.pop(j)
+            j += 1
