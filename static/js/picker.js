@@ -65,13 +65,6 @@ $(document).ready(function(){
     }
 
     function fillSchedule(){
-        classes.sort((a, b) => {
-            if(a.day != b.day){
-                return b.day - a.day
-            } else {
-                return b.end - a.end
-            }
-        })
         for(c in classes){
             placeInTable(classes[c])
         }

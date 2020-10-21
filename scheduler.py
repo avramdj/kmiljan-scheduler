@@ -13,7 +13,9 @@ class Scheduler:
     def find(self):
         if self._find(0):
             #print(self.bitmap)
-            return [json.loads(x) for x in self.placed]
+            placed_list = [json.loads(x) for x in self.placed]
+            placed_list.sort(key=lambda x: (x['day'], x['end']), reverse=True)
+            return placed_list
 
     def _find(self, i):
         if i == len(self.courses):
