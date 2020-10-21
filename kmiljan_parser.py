@@ -85,6 +85,7 @@ def get_course(td, weekday, time, classroom):
 
 
 def download_modules(courses):
+    print("building modules", file=sys.stderr)
     base = req.get(base_link)
     content = base.content.decode('utf-8')
     base_soup = BeautifulSoup(content, 'html.parser')
@@ -126,7 +127,18 @@ def download_modules(courses):
 
             courses_list = list(courses_for_year)
             courses_list.sort()
-            modules[module][year] = courses_list
+            courses_dict = {}
+            for course in courses_list:
+                ctypes = set([x['course_type'] for x in courses if x['description'] == course])
+                courses_dict[course] = {ctype: list(set([x['teacher']\
+                                                    for x in courses
+                                                    if x['description'] == course\
+                                                        and module in x['modules']\
+                                                        and x['course_type'] == ctype]))
+                                        for ctype in ctypes}
+            modules[module][year] = courses_dict
+
+    print("finished building")
 
     return modules
 

@@ -25,9 +25,9 @@ def home():
 def picker(smer, code):
     years = decode_years(code)
     days_list = "Pon,Uto,Sre,Cet,Pet".split(",")
-    courses = []
+    courses = {}
     for year in years:
-        courses.extend([c for c in data.get_modules()[smer][year]])
+        courses.update(data.get_modules()[smer][year])
     return render_template('picker.html', courses=courses,
                             smer=smer, days={i: x for i, x in enumerate(days_list)},
                             hours=[x for x in range(13)])
@@ -45,7 +45,7 @@ def schedule(smer):
         picked[i][2] = [x for x in data.get_courses() if x['description'] == picked[i][0]
                                                     and x['course_type'] == picked[i][1]
                                                     and smer in x['modules']]
-
+    #remove empty classes
     picked = [x for x in picked if len(x[2])]
     scheduler = Scheduler(picked)
     res = scheduler.find()

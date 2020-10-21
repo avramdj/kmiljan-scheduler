@@ -62,10 +62,11 @@ $(document).ready(function(){
     }
 
     function showSchedule(){
-        $('#schedule').fadeIn(200)
-        $('#courseform').fadeOut(200)
-        $('#courseform').attr('hidden')
-        $('#schedule').removeAttr('hidden')
+        $('#courseform').fadeOut(200, ()=>{
+            $('#schedule').fadeIn(200)
+            $('#courseform').attr('hidden')
+            $('#schedule').removeAttr('hidden')
+        })
     }
 
     function fillSchedule(){
@@ -85,7 +86,7 @@ $(document).ready(function(){
         td.setAttribute('colspan', course.duration)
     }
 
-    function hashCode(str) { // java String#hashCode
+    function hashCode(str){
         var hash = 0;
         for (var i = 0; i < str.length; i++) {
            hash = str.charCodeAt(i) + ((hash << 5) - hash);
