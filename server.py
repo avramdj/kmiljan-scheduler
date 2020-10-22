@@ -6,6 +6,8 @@ from pprint import pprint
 from werkzeug.routing import BaseConverter
 from scheduler import Scheduler
 from data_server import DataServer
+import config
+
 
 app = Flask(__name__)
 data = DataServer()
@@ -55,7 +57,7 @@ def schedule(smer):
         schedules = [x for x in res]
     else:
         schedules = None
-    return { "schedules": schedules}
+    return { "schedules": schedules[:config.max_response_size]}
 
 @app.route('/api')
 def api_root():

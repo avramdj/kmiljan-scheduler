@@ -159,3 +159,8 @@ input.checkbox:checked + label + div{
 .teacherchooser{
     margin-bottom: 10px;
 }
+
+div.scroll {  
+    overflow: auto;  
+    white-space: nowrap;  
+}  

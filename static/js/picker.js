@@ -5,11 +5,19 @@ $(document).ready(function(){
 
     $('body').css('display', 'none');
     $('body').fadeIn(350);
+    const smer = $('#smer').text();
     table_parent = $("#tableparent")
     empty_table = $('#table').clone()
-    const smer = $('#smer').text();
-
+    processing = false
+    
     $("#courseform").submit(function(){
+
+        if(processing){
+            console.log("sorry")
+            return false;
+        } else {
+            processing = true;
+        }
 
         let picked = {}
         let checked = $(':checkbox:checked')
@@ -52,6 +60,8 @@ $(document).ready(function(){
         })
         .catch(error => alert(error))
         
+        processing = false;
+
         return false
     });
 
@@ -66,6 +76,11 @@ $(document).ready(function(){
     $("#sledeci").click(function(){
         cleanTable()
         fillSchedule((cur+1)%schedules.length)
+    })
+
+    $("#prethodni").click(function(){
+        cleanTable()
+        fillSchedule(((cur < 1 ? cur+schedules.length : cur)-1)%schedules.length)
     })
 
     function unshowSchedule(){

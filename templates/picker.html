@@ -50,7 +50,7 @@
                                     praktikum
                                 {% endif %}
                             </option>
-                            <option ctype="{{ctype}}" course="{{course}}" class="titletext" value="All">Sve jedno</option>
+                            <option ctype="{{ctype}}" course="{{course}}" class="titletext" value="All">Svejedno</option>
                             <option ctype="{{ctype}}" course="{{course}}" class="titletext" value="None">Ne idem</option>
                             {% for teacher in teachers %}
                             <option ctype="{{ctype}}" course="{{course}}" class="titletext" value="{{teacher}}">
@@ -96,7 +96,8 @@
                 </table>    
                 <br>
                 </div>
-            <button type="button" id="nazad" class="btn btn-outline-secondary titletext fixmarg3">Nazad</button>
+            <button type="button" id="nazad" class="btn btn-outline-secondary titletext fixmarg3">Izaberi opet</button>
+            <button type="button" id="prethodni" class="btn btn-outline-primary titletext fixmarg3">Prethodni</button>
             <button type="button" id="sledeci" class="btn btn-outline-primary titletext fixmarg3">Sledeci</button>
             </div>
             <p id="smer" hidden>{{smer}}</p> 

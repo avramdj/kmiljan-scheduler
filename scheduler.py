@@ -1,6 +1,7 @@
 import numpy as np
 from pprint import pprint
 import json
+from random import shuffle
 
 
 class Scheduler:
@@ -16,6 +17,7 @@ class Scheduler:
             #print(self.bitmap)
             #placed_list = [json.loads(x) for x in self.placed]
             #placed_list.sort(key=lambda x: (x['day'], x['end']), reverse=True)
+            shuffle(self.schedules)
             return self.schedules
 
     def _find(self, i):
