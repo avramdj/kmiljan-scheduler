@@ -87,3 +87,7 @@ input::hover{
     width: 250px;
     margin: auto;
 }
+
+body{
+    display: none;
+}

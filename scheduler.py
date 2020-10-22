@@ -13,12 +13,10 @@ class Scheduler:
         self.schedules = []
 
     def find(self):
-        if self._find(0):
-            #print(self.bitmap)
-            #placed_list = [json.loads(x) for x in self.placed]
-            #placed_list.sort(key=lambda x: (x['day'], x['end']), reverse=True)
-            shuffle(self.schedules)
-            return self.schedules
+        print("pravim raspored...")
+        self._find(0)
+        shuffle(self.schedules)
+        return self.schedules
 
     def _find(self, i):
         if i == len(self.courses):

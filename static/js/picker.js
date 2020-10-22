@@ -3,13 +3,12 @@ var cur;
 
 $(document).ready(function(){
 
-    $('body').css('display', 'none');
-    $('body').fadeIn(350);
     const smer = $('#smer').text();
     table_parent = $("#tableparent")
     empty_table = $('#table').clone()
     processing = false
-    
+    $('body').fadeIn(350);
+
     $("#courseform").submit(function(){
 
         if(processing){
@@ -44,7 +43,7 @@ $(document).ready(function(){
         .then(() => console.log(schedules))
         .then(() => {
 
-            if(!schedules){
+            if(schedules.length == 0){
                 showError("raspored ne postoji")
                 return false
             } else {
@@ -82,6 +81,10 @@ $(document).ready(function(){
         cleanTable()
         fillSchedule(((cur < 1 ? cur+schedules.length : cur)-1)%schedules.length)
     })
+
+/*     $("input.checkbox").change(function(){
+        $(this).next().next().slideToggle()
+    }) */
 
     function unshowSchedule(){
         $('#schedule').fadeOut(200)

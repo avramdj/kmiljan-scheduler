@@ -1,11 +1,10 @@
 $(document).ready(function(){
 
-    $('body').css('display', 'none');
-    $('body').fadeIn(350);
     $('#years').hide()
     if($("#smer option:selected").val().length){
         $('#years').show()
     }
+    $('body').fadeIn(350);
 
     $('#smer').on('change', function(){
         $('#years').slideDown(350);

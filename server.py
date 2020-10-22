@@ -53,11 +53,7 @@ def schedule(smer):
     picked = [x for x in picked if len(x[2])]
     scheduler = Scheduler(picked)
     res = scheduler.find()
-    if res:
-        schedules = [x for x in res]
-    else:
-        schedules = None
-    return { "schedules": schedules[:config.max_response_size]}
+    return { "schedules": res[:config.max_response_size]}
 
 @app.route('/api')
 def api_root():

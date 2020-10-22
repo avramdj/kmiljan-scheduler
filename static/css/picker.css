@@ -147,13 +147,12 @@ label.titletext::hover{
     cursor: pointer;
 }
 
-input.checkbox + label + div{
-    visibility: hidden;
-    margin-bottom: 10px;
+input.checkbox + label + div.teacherchooser{
+    display: none;
 }
 
-input.checkbox:checked + label + div{
-    visibility: visible;
+input.checkbox:checked + label + div.teacherchooser{
+    display: block;;
 }
 
 .teacherchooser{
@@ -163,4 +162,8 @@ input.checkbox:checked + label + div{
 div.scroll {  
     overflow: auto;  
     white-space: nowrap;  
-}  
+}
+
+#teacherselect{
+    width: 130px;
+}

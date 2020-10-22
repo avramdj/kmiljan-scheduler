@@ -18,7 +18,7 @@
     <script src="/static/js/githubbutton.js"></script>
 </head>
 
-<body>
+<body display="none">
     <main id="root" class="text-center">
         <nav class="navbar navbar-expand navbar-light justify-content-end">
             <div class="nav navbar-nav">
@@ -38,7 +38,7 @@
                     <label class="titletext" for="{{course}}"><span class="check">✓</span> {{course}}</label>
                     <div class="teacherchooser {{course}}">
                         {% for ctype, teachers in ctypes.items() %}
-                        <select class="" name="" id="">
+                        <select id="teacherselect" class="custom-select">
                             <option ctype="{{ctype}}" course="{{course}}" selected disabled class="titletext {{course}}" value="All">
                                 {% if ctype == 'lecture' %}
                                     predavanja
