@@ -31,6 +31,7 @@
         <div class="">
             <h1 class="titletext">Kmiljan Scheduler</h1>
             <br>
+            <img id="loading" src="/static/img/loading.gif" class="centered img-fluid ${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}" alt="">
             <form id="courseform" class="form-group titletext unselectable mainform container">
                 <div>
                     {% for course, ctypes in courses.items() %}
@@ -63,10 +64,10 @@
                     {% endfor %}
                 </div>
                 <button type="button" id="home" class="btn btn-outline-secondary titletext fixmarg3">Nazad</button>
-                <button type="submit" class="btn btn-outline-primary titletext fixmarg3">Potvrdi</button>
+                <button type="button" id="coursebtn" class="btn btn-outline-primary titletext fixmarg3">Potvrdi</button>
             </form>
             <div id="schedule" hidden="">
-                <div id="tableparent" style="overflow-x; height:auto; width:auto;">
+                <div id="tableparent">
                 <table id="table" class="table table-striped table-inverse automarg" style="width:70%;margin:auto">
                     <thead class="thead-inverse">
                         <tr>
@@ -96,9 +97,11 @@
                 </table>    
                 <br>
                 </div>
-            <button type="button" id="nazad" class="btn btn-outline-secondary titletext fixmarg3">Izaberi opet</button>
-            <button type="button" id="prethodni" class="btn btn-outline-primary titletext fixmarg3">Prethodni</button>
-            <button type="button" id="sledeci" class="btn btn-outline-primary titletext fixmarg3">Sledeci</button>
+            <div>
+                <button type="button" id="nazad" class="btn btn-outline-secondary titletext fixmarg3">Izaberi opet</button>
+                <button type="button" id="prethodni" class="btn btn-outline-primary titletext fixmarg3">Prethodni</button>
+                <button type="button" id="sledeci" class="btn btn-outline-primary titletext fixmarg3">Sledeci</button>
+            </div>
             </div>
             <p id="smer" hidden>{{smer}}</p> 
         </div>

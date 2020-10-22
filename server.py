@@ -53,6 +53,7 @@ def schedule(smer):
     picked = [x for x in picked if len(x[2])]
     scheduler = Scheduler(picked)
     res = scheduler.find()
+    print(f'found {len(res)} possible schedules')
     return { "schedules": res[:config.max_response_size]}
 
 @app.route('/api')

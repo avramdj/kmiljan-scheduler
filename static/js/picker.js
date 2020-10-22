@@ -9,14 +9,16 @@ $(document).ready(function(){
     processing = false
     $('body').fadeIn(350);
 
-    $("#courseform").submit(function(){
+    $("#coursebtn").click(function(){
 
         if(processing){
-            console.log("sorry")
-            return false;
-        } else {
-            processing = true;
+            return;
         }
+        processing = true
+
+        $('#courseform').fadeOut(200)
+
+        showLoading()
 
         let picked = {}
         let checked = $(':checkbox:checked')
@@ -45,23 +47,20 @@ $(document).ready(function(){
 
             if(schedules.length == 0){
                 showError("raspored ne postoji")
-                return false
+                return;
             } else {
                 window.scrollTo({
                     top: 0,
                     left: 0,
                     behavior: 'smooth'
                 });
+                hideLoading()
                 showSchedule()
                 fillSchedule(0)
             }
 
         })
         .catch(error => alert(error))
-        
-        processing = false;
-
-        return false
     });
 
     $("#nazad").click(function(){
@@ -84,21 +83,28 @@ $(document).ready(function(){
 
 /*     $("input.checkbox").change(function(){
         $(this).next().next().slideToggle()
-    }) */
-
+    })
     function unshowSchedule(){
         $('#schedule').fadeOut(200)
         $('#courseform').fadeIn(200)
         $('#courseform').attr('hidden')
         $('#schedule').removeAttr('hidden')
     }
-
+ */
     function showSchedule(){
         $('#courseform').fadeOut(200, ()=>{
             $('#schedule').fadeIn(200)
             $('#courseform').attr('hidden')
             $('#schedule').removeAttr('hidden')
         })
+    }
+
+    function showLoading(){
+        $("#loading").fadeIn(50)
+    }
+
+    function hideLoading(){
+        $("#loading").fadeOut(50)
     }
 
     function fillSchedule(i){

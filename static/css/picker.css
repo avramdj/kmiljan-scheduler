@@ -167,3 +167,14 @@ div.scroll {
 #teacherselect{
     width: 130px;
 }
+
+#tableparent{
+    overflow-y: scroll;
+    height:600px;
+    width:auto;
+}
+
+#loading{
+    display: none;
+    transform: translate(-50%, 50%);
+}
