@@ -44,6 +44,7 @@
 
 .githubimg {
     margin-top: 10px;
+    margin-bottom: 20px;
     width: 20px;
     height: 20px;
     opacity: 50%;
@@ -170,11 +171,17 @@ div.scroll {
 
 #tableparent{
     overflow-y: scroll;
-    height:600px;
+    height:auto;
     width:auto;
 }
 
 #loading{
     display: none;
     transform: translate(-50%, 50%);
+}
+
+.buttons1{
+    display: block;
+    margin: auto;
+    margin-bottom: 50px;
 }
