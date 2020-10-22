@@ -31,11 +31,35 @@
         <div class="">
             <h1 class="titletext">Kmiljan Scheduler</h1>
             <br>
-            <form id="courseform" class="form-group titletext unselectable">
+            <form id="courseform" class="form-group titletext unselectable mainform container">
                 <div>
-                    {% for course in courses %}
+                    {% for course, ctypes in courses.items() %}
                     <input class="checkbox" id="{{course}}" type="checkbox" name="{{course}}" />
                     <label class="titletext" for="{{course}}"><span class="check">✓</span> {{course}}</label>
+                    <div class="teacherchooser {{course}}">
+                        {% for ctype, teachers in ctypes.items() %}
+                        <select class="" name="" id="">
+                            <option ctype="{{ctype}}" course="{{course}}" selected disabled class="titletext {{course}}" value="All">
+                                {% if ctype == 'lecture' %}
+                                    predavanja
+                                {% endif %}
+                                {% if ctype == 'exercise' %}
+                                    vezbe
+                                {% endif %}
+                                {% if ctype == 'practicum' %}
+                                    praktikum
+                                {% endif %}
+                            </option>
+                            <option ctype="{{ctype}}" course="{{course}}" class="titletext" value="All">Sve jedno</option>
+                            <option ctype="{{ctype}}" course="{{course}}" class="titletext" value="None">Ne idem</option>
+                            {% for teacher in teachers %}
+                            <option ctype="{{ctype}}" course="{{course}}" class="titletext" value="{{teacher}}">
+                                {{teacher}}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        {% endfor %}
+                    </div>
                     {% endfor %}
                 </div>
                 <button type="button" id="home" class="btn btn-outline-secondary titletext fixmarg3">Nazad</button>
@@ -43,7 +67,7 @@
             </form>
             <div id="schedule" hidden="">
                 <div id="tableparent" style="overflow-x; height:auto; width:auto;">
-                <table class="table table-striped table-inverse automarg" style="width:70%;margin:auto">
+                <table id="table" class="table table-striped table-inverse automarg" style="width:70%;margin:auto">
                     <thead class="thead-inverse">
                         <tr>
                             <th></th>
@@ -71,7 +95,7 @@
                         </tbody>
                 </table>    
                 <br>
-            </div>
+                </div>
             <button type="button" id="nazad" class="btn btn-outline-secondary titletext fixmarg3">Nazad</button>
             <button type="button" id="sledeci" class="btn btn-outline-primary titletext fixmarg3">Sledeci</button>
             </div>

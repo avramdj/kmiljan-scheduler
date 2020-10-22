@@ -9,24 +9,27 @@ class Scheduler:
         self.bitmap = np.zeros(shape=(5, 13))
         self.placed = set([])
         self.courses = courses
+        self.schedules = []
 
     def find(self):
         if self._find(0):
             #print(self.bitmap)
-            placed_list = [json.loads(x) for x in self.placed]
-            placed_list.sort(key=lambda x: (x['day'], x['end']), reverse=True)
-            return placed_list
+            #placed_list = [json.loads(x) for x in self.placed]
+            #placed_list.sort(key=lambda x: (x['day'], x['end']), reverse=True)
+            return self.schedules
 
     def _find(self, i):
         if i == len(self.courses):
+            placed_list = [json.loads(x) for x in self.placed]
+            placed_list.sort(key=lambda x: (x['day'], x['end']), reverse=True)
+            self.schedules.append(placed_list)
             return True
         for term in self.courses[i][2]:
             if not self.conflict(term):
                 self.place(term)
-                if self._find(i+1):
-                    return True
+                self._find(i+1)
                 self.remove(term)
-        return False
+        return len(self.schedules) > 0
 
     def conflict(self, term):
         for i in range(term['start']-8, term['end']-8):

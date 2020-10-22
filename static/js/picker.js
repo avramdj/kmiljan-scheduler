@@ -1,19 +1,28 @@
-var classes;
+var schedules;
+var cur;
 
 $(document).ready(function(){
 
     $('body').css('display', 'none');
     $('body').fadeIn(350);
-    table = $('tbody')
+    table_parent = $("#tableparent")
+    empty_table = $('#table').clone()
     const smer = $('#smer').text();
 
     $("#courseform").submit(function(){
 
-        let picked = []
+        let picked = {}
         let checked = $(':checkbox:checked')
         checked.each(function(){
-            picked.push($(this).attr('id'))
+            let name = $(this).attr("id")
+            let selected = $("[course='"+name+"']:selected")
+            prefs = {}
+            selected.each(function(){
+                prefs[$(this).attr("ctype")] = $(this).attr("value")
+            })
+            picked[$(this).attr('id')] = prefs
         })
+        console.log(picked)
 
         fetch(`/api/scheduler/${smer}`, {
             method: 'POST',
@@ -23,11 +32,11 @@ $(document).ready(function(){
             }
         })
         .then(res => res.json())
-        .then(data => classes = data['courses'])
-        .then(() => console.log(classes))
+        .then(data => schedules = data['schedules'])
+        .then(() => console.log(schedules))
         .then(() => {
 
-            if(!classes){
+            if(!schedules){
                 showError("raspored ne postoji")
                 return false
             } else {
@@ -37,7 +46,7 @@ $(document).ready(function(){
                     behavior: 'smooth'
                 });
                 showSchedule()
-                fillSchedule()
+                fillSchedule(0)
             }
 
         })
@@ -52,6 +61,11 @@ $(document).ready(function(){
 
     $("#home").click(function(){
         window.location = '/';
+    })
+
+    $("#sledeci").click(function(){
+        cleanTable()
+        fillSchedule((cur+1)%schedules.length)
     })
 
     function unshowSchedule(){
@@ -69,21 +83,17 @@ $(document).ready(function(){
         })
     }
 
-    function fillSchedule(){
-        for(c in classes){
-            placeInTable(classes[c])
+    function fillSchedule(i){
+        cur = i;
+        for(c in schedules[i]){
+            placeInTable(schedules[i][c])
         }
     }
 
     function cleanTable(course){
-        rows = table.children()
-        day = rows[course.day]
-        td = (day.children)[course.start-7]
-        td.innerHTML = `${course.description}`
-        if(course.course_type != 'lecture'){
-            td.innerHTML += `\n(${course.course_type[0] == 'e' ? 'vezbe' : 'praktikum'})`
-        }
-        td.setAttribute('colspan', course.duration)
+        table_parent.find(":first-child").remove()
+        table_parent.prepend(empty_table)
+        empty_table = $('#table').clone()
     }
 
     function hashCode(str){
@@ -109,6 +119,7 @@ $(document).ready(function(){
         console.log(`#td-${course.day}-${course.start-7}`)
         td.text(course.description + " " + course.course_type)
   */       
+        table = $('tbody')
         rows = table.children()
         day = rows[course.day]
         td = (day.children)[course.start-7]
@@ -141,8 +152,8 @@ $(document).ready(function(){
         return code.join("");
     }
 
-    function showCourses(courses){
-        console.log(courses)
+    function showSchedules(schedules){
+        console.log(schedules)
     }
 
 });

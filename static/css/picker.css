@@ -146,3 +146,16 @@ input.checkbox:checked + label:before {
 label.titletext::hover{
     cursor: pointer;
 }
+
+input.checkbox + label + div{
+    visibility: hidden;
+    margin-bottom: 10px;
+}
+
+input.checkbox:checked + label + div{
+    visibility: visible;
+}
+
+.teacherchooser{
+    margin-bottom: 10px;
+}

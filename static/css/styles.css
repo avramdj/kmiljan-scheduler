@@ -82,3 +82,8 @@
 input::hover{
     cursor: pointer;
 }
+
+#courseform{
+    width: 250px;
+    margin: auto;
+}

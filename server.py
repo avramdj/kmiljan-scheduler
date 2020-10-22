@@ -37,19 +37,25 @@ def picker(smer, code):
 def schedule(smer):
     picked_dict = request.get_json(force=True)
     picked = []
-    for course in picked_dict:
-        picked.append([course, 'lecture', 0])
-        picked.append([course, 'exercise', 0])
-        picked.append([course, 'practicum', 0])
+    #pprint(picked_dict)
+    for course, ctypes in picked_dict.items():
+        for ctype, teacher in ctypes.items():
+            picked.append([course, ctype, 0, teacher])
     for i, _ in enumerate(picked):
         picked[i][2] = [x for x in data.get_courses() if x['description'] == picked[i][0]
                                                     and x['course_type'] == picked[i][1]
-                                                    and smer in x['modules']]
+                                                    and smer in x['modules']
+                                                    and (x['teacher'] == picked[i][3]\
+                                                        or picked[i][3] == "All")]
     #remove empty classes
     picked = [x for x in picked if len(x[2])]
     scheduler = Scheduler(picked)
     res = scheduler.find()
-    return {'courses': res}
+    if res:
+        schedules = [x for x in res]
+    else:
+        schedules = None
+    return { "schedules": schedules}
 
 @app.route('/api')
 def api_root():
