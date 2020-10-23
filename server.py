@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, Response
 import json
 import sys
 import pickle
@@ -7,6 +7,7 @@ from werkzeug.routing import BaseConverter
 from scheduler import Scheduler
 from data_server import DataServer
 import config
+import os
 
 
 app = Flask(__name__)
@@ -20,9 +21,17 @@ class RegexConverter(BaseConverter):
 
 app.url_map.converters['regex'] = RegexConverter
 
+"""
+@app.before_request
+def before_request():
+    if request.url.startswith('http://'):
+        return redirect(request.url.replace('http://', 'https://'), code=301)
+ """
+
 @app.route('/')
 def home():
     return render_template('home.html')
+
 
 @app.route('/picker/<regex("[imnvrl]"):smer>/<regex("[01]{4}"):code>')
 def picker(smer, code):
@@ -73,6 +82,11 @@ def api_courses():
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('error.html', error_code="404", error_message="Not found")
+
+@app.route('/.well-known/acme-challenge/<id>')
+def acme_challenge(id):
+	return "%s.%s" % (id, os.environ.get('ACME_CHALLENGE', 'ACME CHALLENGE VARIABLE IS NOT SET'))
+
 
 def decode_years(code):
     years = []
