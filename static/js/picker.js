@@ -45,27 +45,26 @@ $(document).ready(function(){
         .then(() => console.log(schedules))
         .then(() => {
 
+            hideLoading()
+
             if(schedules.length == 0){
                 showError("raspored ne postoji")
-                return;
+                hideSchedule()
             } else {
                 window.scrollTo({
                     top: 0,
                     left: 0,
                     behavior: 'smooth'
                 });
-                hideLoading()
-                showSchedule()
                 fillSchedule(0)
+                showSchedule()
             }
-
         })
         .catch(error => alert(error))
+        processing = false
     });
 
-    $("#nazad").click(function(){
-        location.reload()
-    })
+    $("#nazad").click(hideSchedule)
 
     $("#home").click(function(){
         window.location = '/';
@@ -91,6 +90,16 @@ $(document).ready(function(){
         $('#schedule').removeAttr('hidden')
     }
  */
+
+    function hideSchedule(){
+        $('#schedule').fadeOut(200, ()=>{
+            $('#courseform').fadeIn(200)
+            $('#schedule').attr('hidden')
+            $('#courseform').removeAttr('hidden')
+            cleanTable()
+        })
+    }
+
     function showSchedule(){
         $('#courseform').fadeOut(200, ()=>{
             $('#schedule').fadeIn(200)

@@ -170,7 +170,6 @@ div.scroll {
 }
 
 #tableparent{
-    overflow-y: scroll;
     height:auto;
     width:auto;
 }

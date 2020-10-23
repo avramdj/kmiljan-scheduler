@@ -13,7 +13,6 @@ class Scheduler:
         self.schedules = []
 
     def find(self):
-        print("pravim raspored...")
         self._find(0)
         shuffle(self.schedules)
         return self.schedules
