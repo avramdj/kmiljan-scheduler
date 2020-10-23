@@ -1,5 +1,4 @@
-import flask
-from flask import Flask, render_template, request, Response, redirect
+from flask import Flask, render_template, request, Response
 import json
 import sys
 import pickle
@@ -22,10 +21,12 @@ class RegexConverter(BaseConverter):
 
 app.url_map.converters['regex'] = RegexConverter
 
+"""
 @app.before_request
 def before_request():
     if request.url.startswith('http://'):
         return redirect(request.url.replace('http://', 'https://'), code=301)
+ """
 
 @app.route('/')
 def home():
