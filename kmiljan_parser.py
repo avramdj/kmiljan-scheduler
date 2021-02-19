@@ -93,7 +93,10 @@ def download_modules(courses):
     groups = {x.get_text(): x['value'] for x in base_soup.find_all(
         'option', value=re.compile(r'form'))}
 
-    groups.pop('СЕМИНАР')
+    try:
+        groups.pop('СЕМИНАР')
+    except:
+        print("NO SEMINAR")
 
     modules = {}
     # put groups under corresponding modules

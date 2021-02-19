@@ -5,7 +5,7 @@ import pickle
 from pprint import pprint
 from kmiljan_parser import download_courses, download_modules
 from scheduler import Scheduler
-from datetime import date
+from datetime import date, datetime
 
 
 class DataServer:
@@ -33,14 +33,15 @@ class DataServer:
         return self.all_modules
 
     def update(self):
-        try:
-            self.all_courses = download_courses() #pickle.load(open('pickles/courses.p', 'rb')) 
-            self.all_modules = download_modules(self.all_courses) #pickle.load(open('pickles/modules.p', 'rb'))
+        self.all_courses = download_courses() #pickle.load(open('pickles/courses.p', 'rb')) 
+        self.all_modules = download_modules(self.all_courses) #pickle.load(open('pickles/modules.p', 'rb'))
 
-            #pickle.dump(self.all_courses, open('pickles/courses.p', 'wb'))
-            #pickle.dump(self.all_modules, open('pickles/modules.p', 'wb'))
+        #MINI IZMENE
+        if len(self.all_courses) == 0:
+            return
 
-            today = date.today().strftime("%b_%d_%Y")
-            self.last_update = today
-        except Exception as e:
-            print(f'UPDATE EXCEPTION : {e}')
+        #pickle.dump(self.all_courses, open('pickles/courses.p', 'wb'))
+        #pickle.dump(self.all_modules, open('pickles/modules.p', 'wb'))
+
+        today = date.today().strftime("%b_%d_%Y")
+        self.last_update = today
