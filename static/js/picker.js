@@ -130,11 +130,13 @@ $(document).ready(function(){
     }
 
     function hashCode(str){
+        str += str;
         var hash = 0;
         for (var i = 0; i < str.length; i++) {
            hash = str.charCodeAt(i) + ((hash << 5) - hash);
         }
-        return hash;
+        hash = hash < 0 ? -hash : hash;
+        return hash.toString();
     } 
     
     function intToRGB(i){
@@ -146,11 +148,11 @@ $(document).ready(function(){
         return "00000".substring(0, 6 - c.length) + c;
     }
     
-    function getRandomColor() {
-        var letters = 'BCDEF'.split('');
+    function getRandomColor(name) {
+        var letters = 'ACDEF'.split('');
         var color = '';
         for (var i = 0; i < 6; i++ ) {
-            color += letters[Math.floor(Math.random() * letters.length)];
+            color += letters[hashCode(name)[i] % letters.length];
         }
         return color;
     }
