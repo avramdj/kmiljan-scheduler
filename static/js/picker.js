@@ -146,6 +146,14 @@ $(document).ready(function(){
         return "00000".substring(0, 6 - c.length) + c;
     }
     
+    function getRandomColor() {
+        var letters = 'BCDEF'.split('');
+        var color = '';
+        for (var i = 0; i < 6; i++ ) {
+            color += letters[Math.floor(Math.random() * letters.length)];
+        }
+        return color;
+    }
 
     function placeInTable(course){
 /*         td = $(`#td-${course.day}-${course.start-7}`)
@@ -163,7 +171,7 @@ $(document).ready(function(){
         td.innerHTML += `<br/>${course.teacher}`
         td.setAttribute('colspan', course.duration)
         td.setAttribute('hashcode', hashCode(td.innerHTML))
-        td.style.background = `#${intToRGB(course.description)}`
+        td.style.background = `#${getRandomColor(course.description)}`
         /* url('/static/img/bg.png') left top"; */
         /*td.style.color = '#ffffff' */
 
