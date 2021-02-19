@@ -83,6 +83,10 @@ def api_courses():
 def page_not_found(e):
     return render_template('error.html', error_code="404", error_message="Not found")
 
+@app.errorhandler(500)
+def internal_error(e):
+    return render_template('error.html', error_code="500", error_message="Unable to fetch/parse courses.")
+
 @app.route('/.well-known/acme-challenge/<id>')
 def acme_challenge(id):
 	return "%s.%s" % (id, os.environ.get('ACME_CHALLENGE', 'ACME CHALLENGE VARIABLE IS NOT SET'))
