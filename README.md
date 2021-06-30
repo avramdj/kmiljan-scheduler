@@ -2,8 +2,6 @@
 
 A scheduling app for the courses at my college.
 
-*Note: this is only a tool, not necessarily an end solution*
-
 ### Screenshots
 
 #### Home
