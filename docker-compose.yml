@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  app:
+    build: 
+      context: ./app
+      args:
+        WORKER_COUNT: 1
+    ports:
+      - 3333:3333
+    environment:
+      - MAX_RESPONSE_SIZE=20
