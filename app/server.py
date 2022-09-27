@@ -12,7 +12,7 @@ load_dotenv()
 app = Flask(__name__)
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
 data = DataServer()
-max_response_size = int(os.environ["MAX_RESPONSE_SIZE"])
+max_response_size = 2048
 
 
 class RegexConverter(BaseConverter):

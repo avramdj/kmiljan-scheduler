@@ -1,6 +1,7 @@
 import json
 from pprint import pprint
 from random import shuffle
+from copy import copy
 
 import numpy as np
 
@@ -13,8 +14,40 @@ class Scheduler:
         self.schedules = []
 
     def find(self):
+
+        def classroom_group(course):
+            if(course.get("classroom") == None): return 0
+            if(course["classroom"][0] == 'J'): return 1
+            if(course["classroom"][0] == 'N'): return 2
+            return 0
+
         self._find(0)
-        shuffle(self.schedules)
+        self.schedules.sort(key = lambda list : sum([
+            x["start"] for x in list
+        ])/len(list))
+
+        fixed_bad_schedules = []
+
+        for schedule in self.schedules:
+            passes = True
+            n = len(schedule)
+
+            for idx,course in enumerate(schedule):
+                i = idx
+                if(idx < n-1):
+                    if(schedule[i]["day"] == schedule[i+1]["day"]):
+                        if(classroom_group(schedule[i]) != classroom_group(schedule[i+1])):
+                            if(schedule[i+1]["start"] - schedule[i]["end"] < 1):
+                                passes = False
+                                break
+            
+            if(passes):
+                fixed_bad_schedules.append(schedule)
+        
+
+        self.schedules = copy(fixed_bad_schedules)
+
+        #shuffle(self.schedules)
         return self.schedules
 
     def _find(self, i):

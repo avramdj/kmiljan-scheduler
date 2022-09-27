@@ -41,7 +41,10 @@ $(document).ready(function(){
             }
         })
         .then(res => res.json())
-        .then(data => schedules = data['schedules'])
+        .then(data => { 
+            schedules = data['schedules']
+            $("#schedule-counter").html(`Schedule 1/${schedules.length}`);
+        })
         .then(() => console.log(schedules))
         .then(() => {
 
@@ -71,13 +74,19 @@ $(document).ready(function(){
     })
 
     $("#sledeci").click(function(){
-        cleanTable()
-        fillSchedule((cur+1)%schedules.length)
+        if(cur < schedules.length-1) {
+            cleanTable()
+            fillSchedule(cur+1)
+            $("#schedule-counter").html(`Schedule ${cur+1}/${schedules.length}`);
+        }
     })
 
     $("#prethodni").click(function(){
-        cleanTable()
-        fillSchedule(((cur < 1 ? cur+schedules.length : cur)-1)%schedules.length)
+        if(cur > 0) {
+            cleanTable()
+            fillSchedule(cur-1)
+            $("#schedule-counter").html(`Schedule ${cur+1}/${schedules.length}`);
+        }
     })
 
 /*     $("input.checkbox").change(function(){
@@ -171,6 +180,7 @@ $(document).ready(function(){
             td.innerHTML += ` (${course.course_type[0] == 'e' ? 'vezbe' : 'praktikum'})`
         }
         td.innerHTML += `<br/>${course.teacher}`
+        td.innerHTML += `<br/>${course.classroom}`
         td.setAttribute('colspan', course.duration)
         td.setAttribute('hashcode', hashCode(td.innerHTML))
         td.style.background = `#${getRandomColor(course.description)}`
