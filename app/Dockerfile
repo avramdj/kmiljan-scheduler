@@ -8,5 +8,4 @@ WORKDIR /app
 COPY . .
 
 RUN pip install -r requirements.txt
-
-CMD gunicorn -w $WORKER_COUNT --bind=0.0.0.0:3333 --log-level=debug wsgi:app 
+ENTRYPOINT python server.py

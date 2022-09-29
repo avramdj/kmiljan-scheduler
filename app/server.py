@@ -1,4 +1,5 @@
 import os
+import logger
 
 from dotenv import load_dotenv
 from flask import Flask, render_template, request
@@ -33,11 +34,13 @@ def before_request():
 
 @app.route("/")
 def home():
+    logger.log_request(request)
     return render_template("home.html")
 
 
 @app.route('/picker/<regex("[imnvrl]"):smer>/<regex("[01]{4}"):code>')
 def picker(smer, code):
+    logger.log_request(request)
     years = decode_years(code)
     days_list = "Pon,Uto,Sre,Cet,Pet".split(",")
     courses = {}
@@ -73,7 +76,7 @@ def schedule(smer):
     picked = [x for x in picked if len(x[2])]
     scheduler = Scheduler(picked)
     res = scheduler.find()
-    print(f"found {len(res)} possible schedules")
+    #print(f"found {len(res)} possible schedules")
     return {"schedules": res[:max_response_size]}
 
 
