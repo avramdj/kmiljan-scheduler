@@ -12,6 +12,8 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
+
+# Start Data loop
 data = DataServer()
 max_response_size = 2048
 
