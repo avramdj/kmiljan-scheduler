@@ -1,4 +1,5 @@
 import os
+import logger
 
 from dotenv import load_dotenv
 from flask import Flask, render_template, request
@@ -11,8 +12,10 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
+
+# Start Data loop
 data = DataServer()
-max_response_size = int(os.environ["MAX_RESPONSE_SIZE"])
+max_response_size = 2048
 
 
 class RegexConverter(BaseConverter):
@@ -33,11 +36,13 @@ def before_request():
 
 @app.route("/")
 def home():
+    logger.log_request(request)
     return render_template("home.html")
 
 
 @app.route('/picker/<regex("[imnvrl]"):smer>/<regex("[01]{4}"):code>')
 def picker(smer, code):
+    logger.log_request(request)
     years = decode_years(code)
     days_list = "Pon,Uto,Sre,Cet,Pet".split(",")
     courses = {}
@@ -73,7 +78,7 @@ def schedule(smer):
     picked = [x for x in picked if len(x[2])]
     scheduler = Scheduler(picked)
     res = scheduler.find()
-    print(f"found {len(res)} possible schedules")
+    #print(f"found {len(res)} possible schedules")
     return {"schedules": res[:max_response_size]}
 
 
@@ -121,3 +126,8 @@ def decode_years(code):
         if int(code[i]):
             years.append(i + 1)
     return years
+
+
+if __name__ == "__main__":
+    from waitress import serve
+    serve(app, host="0.0.0.0",port=5555)

@@ -1,6 +1,7 @@
 import json
 from pprint import pprint
 from random import shuffle
+from copy import copy
 
 import numpy as np
 
@@ -12,19 +13,47 @@ class Scheduler:
         self.courses = courses
         self.schedules = []
 
+    def schedule_filter(self,schedule):
+        n = len(schedule)
+
+        def classroom_group(course):
+            if(course.get("classroom") == None): return 0
+            if(course["classroom"][0] == 'J'): return 1
+            if(course["classroom"][0] == 'N'): return 2
+            return 0
+
+        for idx,course in enumerate(schedule):
+            i = idx
+            if(idx < n-1):
+                if(schedule[i]["day"] == schedule[i+1]["day"]):
+                    if(classroom_group(schedule[i]) != classroom_group(schedule[i+1])):
+                        if(schedule[i+1]["start"] - schedule[i]["end"] < 1):
+                            return False
+        
+        return True
+            
+
     def find(self):
+
         self._find(0)
-        shuffle(self.schedules)
+        self.schedules.sort(key = lambda list : sum(
+            x["start"] for x in list
+        )*(np.array([x["start"] for x in list]).std()))
+
+        #shuffle(self.schedules)
         return self.schedules
 
     def _find(self, i):
         if i == len(self.courses):
             placed_list = [json.loads(x) for x in self.placed]
             placed_list.sort(key=lambda x: (x["day"], x["end"]), reverse=True)
-            self.schedules.append(placed_list)
+
+            if self.schedule_filter(placed_list):
+                self.schedules.append(placed_list)
+
             return True
         for term in self.courses[i][2]:
-            if not self.conflict(term):
+            if len(self.schedules) < 200 and not self.conflict(term):
                 self.place(term)
                 self._find(i + 1)
                 self.remove(term)

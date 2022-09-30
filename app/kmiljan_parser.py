@@ -185,8 +185,6 @@ def download_courses():
 
     for room, room_name in rooms:
 
-        print("Working on: " + room, file=sys.stderr)
-
         resp = req.get(base_link + room)
         content = resp.content.decode("utf-8")
         soup = BeautifulSoup(content, "html.parser")
