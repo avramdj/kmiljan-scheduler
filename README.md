@@ -2,6 +2,8 @@
 
 A scheduling app for the courses at my college.
 
+#### Note: As of recently, this repo is no longer being maintained, check out [@activatethefud](https://github.com/activatethefud/kmiljan-scheduler)'s fork, hosted at [https://raspored.xyz/](https://raspored.xyz/)
+
 ### Screenshots
 
 #### Home
